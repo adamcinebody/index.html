@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cinebody LTV:CAC Analysis — Sept 2025–Mar 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --border: #2a2d34;
+    --accent: #c8f135;
+    --accent2: #4ef0c0;
+    --warn: #f0a44e;
+    --muted: #5a5f6e;
+    --text: #e8eaf0;
+    --text-dim: #9ea3b0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 48px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  h2 {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 16px;
+    margin-top: 40px;
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+
+  .kpi-label {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+  }
+
+  thead tr { border-bottom: 1px solid var(--border); }
+
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1e2026;
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  .num { text-align: right; }
+
+  .ratio-high { color: var(--accent); }
+  .ratio-mid { color: var(--accent2); }
+  .ratio-low { color: var(--warn); }
+  .ratio-bad { color: #f06b6b; }
+
+  .tag {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .new-tag {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 6px;
+    background: #1a2a0e;
+    border: 1px solid #3a5a1a;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-left: 6px;
+  }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0;
+    margin-bottom: 12px;
+  }
+
+  .section-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title { font-size: 13px; font-weight: 600; }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    background: #1e2026;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .insight-box {
+    background: #131a0e;
+    border: 1px solid #2a3a1a;
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .insight-box strong { color: var(--text); }
+
+  .warn-box {
+    background: #1a1510;
+    border: 1px solid #3a2a10;
+    border-left: 3px solid var(--warn);
+    padding: 16px 20px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .warn-box strong { color: var(--text); }
+
+  .changes-banner {
+    background: #131a0e;
+    border: 1px solid #2a3a1a;
+    padding: 14px 20px;
+    margin-bottom: 32px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .changes-banner strong { color: var(--accent); }
+
+  .methodology {
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .method-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .method-key {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent2);
+    min-width: 160px;
+    font-size: 11px;
+  }
+
+  .okr-bar {
+    margin-top: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+
+  .okr-title {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .score-track {
+    display: flex;
+    gap: 0;
+    height: 6px;
+    margin-bottom: 10px;
+  }
+
+  .score-seg { flex: 1; background: var(--border); margin-right: 2px; }
+  .score-seg.filled { background: var(--accent); }
+
+  .score-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+  }
+
+  .score-current {
+    font-size: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Cinebody · Internal Analysis</div>
+  <h1>LTV:CAC Analysis</h1>
+  <div class="meta">Period: Sept 2025 – Mar 2026 &nbsp;·&nbsp; n=32 working accounts &nbsp;·&nbsp; OKR Obj 2 / KR2 &nbsp;·&nbsp; Updated Mar 27, 2026</div>
+</header>
+
+<div class="changes-banner">
+  <strong>This update:</strong> &nbsp;+4 new accounts (Pulmuone, memonyc.com, Slipstream, United Flea Markets) &nbsp;·&nbsp; PetIQ expansion updated $4,017 → $8,617
+</div>
+
+<h2>Baseline Metrics</h2>
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">Working Accounts</div>
+    <div class="kpi-value">32</div>
+    <div class="kpi-sub">excl. FORIA + 3 defunct $750 pilots</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Total Sales Spend</div>
+    <div class="kpi-value">$111K</div>
+    <div class="kpi-sub">CRO salary + direct sales costs</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Blended CAC</div>
+    <div class="kpi-value">$3,475</div>
+    <div class="kpi-sub">$111,186 ÷ 32</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Overall LTV:CAC</div>
+    <div class="kpi-value">3.98x</div>
+    <div class="kpi-sub">Avg LTV $13,829 · prev 3.56x ↑</div>
+  </div>
+</div>
+
+<h2>Cohort 1 — Product Class</h2>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">SaaS</span>
+    <span class="badge">n=4</span>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Segment</th><th class="num">Avg LTV</th><th class="num">CAC</th><th class="num">Ratio</th><th>n</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Overall</td><td class="num">$4,850</td><td class="num">$3,475</td><td class="num ratio-low">1.40x</td><td>4</td></tr>
+      <tr><td>→ Agency</td><td class="num">$4,200</td><td class="num">$3,475</td><td class="num ratio-low">1.21x</td><td>2</td></tr>
+      <tr><td>→ Non-Agency</td><td class="num">$5,500</td><td class="num">$3,475</td><td class="num ratio-low">1.58x</td><td>2</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">SaaS + CS</span>
+    <span class="badge">n=0</span>
+  </div>
+  <table>
+    <tbody>
+      <tr><td style="color:var(--muted); padding: 14px 20px; font-size:12px;">No accounts acquired in this period. Establish baseline when first accounts close.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">CS Only</span>
+    <span class="badge">n=28</span>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Segment</th><th class="num">Avg LTV</th><th class="num">CAC</th><th class="num">Ratio</th><th>n</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Overall</td><td class="num">$15,112</td><td class="num">$3,475</td><td class="num ratio-mid">4.35x</td><td>28</td></tr>
+      <tr><td>→ Agency</td><td class="num">$45,458</td><td class="num">$3,475</td><td class="num ratio-high">13.08x</td><td>5</td></tr>
+      <tr><td>→ Non-Agency</td><td class="num">$8,515</td><td class="num">$3,475</td><td class="num ratio-mid">2.45x</td><td>23</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="insight-box">
+  <strong>Key signal:</strong> CS Only continues to carry the portfolio at <strong>4.35x overall</strong>, with Agency the standout sub-segment at 13.08x. CS Only Non-Agency improved to 2.45x (from 1.98x last run) as new higher-value accounts landed — still below the 3x threshold but trending in the right direction. SaaS remains at 1.40x with no new accounts; this cohort needs close monitoring as it grows.
+</div>
+
+<h2>Cohort 2 — ACV Band</h2>
+
+<div class="section">
+  <table>
+    <thead><tr>
+      <th>ACV Band</th><th class="num">Avg LTV</th><th class="num">CAC</th><th class="num">Ratio</th><th>n</th><th>Signal</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>&lt;$5K</td><td class="num">$3,223</td><td class="num">$3,475</td><td class="num ratio-bad">0.93x</td><td>20</td>
+        <td><span class="tag">Loss</span></td>
+      </tr>
+      <tr>
+        <td>$5K – $15K</td><td class="num">$7,724</td><td class="num">$3,475</td><td class="num ratio-mid">2.22x</td><td>8</td>
+        <td><span class="tag">Below target</span></td>
+      </tr>
+      <tr>
+        <td>$15K+</td><td class="num">$79,069</td><td class="num">$3,475</td><td class="num ratio-high">22.76x</td><td>4</td>
+        <td><span class="tag">Exceptional</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="warn-box">
+  <strong>Critical finding:</strong> 20 of 32 working accounts (63%) fall in the &lt;$5K ACV band at <strong>0.93x LTV:CAC — still destroying value at acquisition cost.</strong> However, the $15K+ band grew to n=4 (memonyc.com joining at $30K) and $5K–$15K expanded to n=8. Mix is slowly improving but sub-$5K concentration remains the core structural issue.
+</div>
+
+<h2>Top Accounts by LTV</h2>
+<div class="section">
+  <table>
+    <thead><tr>
+      <th>Account</th><th>Product</th><th>Type</th><th class="num">LTV</th><th class="num">LTV:CAC</th><th></th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Contend</td><td>CS Only</td><td>Agency</td><td class="num">$188,200</td><td class="num ratio-high">54.2x</td><td></td></tr>
+      <tr><td>The Zebra</td><td>CS Only</td><td>B2C</td><td class="num">$74,289</td><td class="num ratio-high">21.4x</td><td></td></tr>
+      <tr><td>memonyc.com</td><td>CS Only</td><td>B2B + B2C</td><td class="num">$30,413</td><td class="num ratio-high">8.8x</td><td><span class="new-tag">New</span></td></tr>
+      <tr><td>Stark Media Planning</td><td>CS Only</td><td>Agency</td><td class="num">$23,375</td><td class="num ratio-high">6.7x</td><td></td></tr>
+      <tr><td>Angela Caglia Skincare</td><td>CS Only</td><td>B2C</td><td class="num">$12,138</td><td class="num ratio-mid">3.5x</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="okr-bar">
+  <div class="okr-title">OKR Score — Obj 2 / KR2: Define LTV:CAC by Segment</div>
+  <div class="score-track">
+    <div class="score-seg filled"></div>
+    <div class="score-seg filled"></div>
+    <div class="score-seg filled"></div>
+    <div class="score-seg"></div>
+  </div>
+  <div class="score-labels">
+    <span>0 · No definition</span>
+    <span>0.5 · Overall defined</span>
+    <span>0.75 · 2+ cohorts</span>
+    <span>1.0 · Used in decision</span>
+  </div>
+  <div class="score-current">Current Score: 0.75</div>
+  <div style="margin-top:10px; font-size:12px; color:var(--text-dim);">
+    Overall LTV:CAC defined ✓ &nbsp;·&nbsp; Segmented by Product Class + ACV Band ✓ &nbsp;·&nbsp; Used in 1+ decisions — pending
+  </div>
+</div>
+
+<div class="methodology">
+  <h2>Methodology & Assumptions</h2>
+  <div class="method-item"><span class="method-key">LTV</span><span>Revenue-based (no margin adjustment). Acct. Lifetime Spend from invoice data.</span></div>
+  <div class="method-item"><span class="method-key">CAC</span><span>Blended: $111,186 total sales spend ÷ 32 working accounts. Applied uniformly across all cohorts.</span></div>
+  <div class="method-item"><span class="method-key">CRO Salary</span><span>Full market-rate salary used (not reduced rate paid in period) to reflect current/future state.</span></div>
+  <div class="method-item"><span class="method-key">Excluded from CAC</span><span>Partial CS team pre-sales time, COO/CFO involvement, salesops time. Noted as known exclusion for comparability.</span></div>
+  <div class="method-item"><span class="method-key">Exclusions</span><span>FORIA ($0 revenue, ghosted beta) and 3 accounts with $750 first invoice (Chair King, Another Planet Entertainment, New West KnifeWorks) excluded — defunct pilot program. All 4 removed from both LTV and CAC denominator.</span></div>
+  <div class="method-item"><span class="method-key">Slipstream</span><span>Firmographics manually entered: B2C, Sporting Goods, headcount ≤10, revenue unknown. Included in analysis.</span></div>
+  <div class="method-item"><span class="method-key">ACV (CS Only)</span><span>= Lifetime Spend (lifespan forced to 1 year per established methodology).</span></div>
+  <div class="method-item"><span class="method-key">ACV (SaaS)</span><span>= Avg. Spend/Year from invoice data.</span></div>
+  <div class="method-item"><span class="method-key">SaaS + CS</span><span>No accounts in period. Baseline to be established on first close.</span></div>
+  <div class="method-item"><span class="method-key">Data window</span><span>Sept 2025 – Mar 2026. Pre-Sept data excluded due to inconsistent historical tracking.</span></div>
+</div>
+
+</body>
+</html>
