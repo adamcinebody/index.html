@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cinebody ICP Analysis — Q1 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --border: #2a2d34;
+    --accent: #c8f135;
+    --accent2: #4ef0c0;
+    --warn: #f0a44e;
+    --danger: #f06b6b;
+    --muted: #5a5f6e;
+    --text: #e8eaf0;
+    --text-dim: #9ea3b0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 48px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 36px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .report-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .report-subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .report-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+
+  .kpi-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .kpi-value.teal { color: var(--accent2); }
+  .kpi-value.warn { color: var(--warn); }
+  .kpi-value.plain { color: var(--text); }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  h2 {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    margin-top: 32px;
+  }
+
+  h2:first-of-type { margin-top: 0; }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .section-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    background: #1e2026;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .badge.green {
+    background: #1a2610;
+    color: var(--accent);
+  }
+
+  .badge.red {
+    background: #261010;
+    color: var(--danger);
+  }
+
+  .badge.warn {
+    background: #261e10;
+    color: var(--warn);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1e2026;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .num { text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  .score-high { color: var(--accent); font-weight: 600; }
+  .score-mid { color: var(--accent2); }
+  .score-low { color: var(--warn); }
+  .score-bad { color: var(--danger); }
+
+  .tag {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .tag.cs-saas { border-color: #2a3a1a; color: var(--accent); }
+  .tag.saas { border-color: #1a2a3a; color: var(--accent2); }
+  .tag.cs-only { border-color: #3a2a1a; color: var(--warn); }
+  .tag.active { border-color: #1a3a2a; color: var(--accent2); }
+  .tag.churned { border-color: #3a1a1a; color: var(--danger); }
+
+  .insight-box {
+    background: #131a0e;
+    border: 1px solid #2a3a1a;
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .insight-box strong { color: var(--text); }
+
+  .warn-box {
+    background: #1a1510;
+    border: 1px solid #3a2a10;
+    border-left: 3px solid var(--warn);
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .warn-box strong { color: var(--text); }
+
+  .info-box {
+    background: #101520;
+    border: 1px solid #1a2a3a;
+    border-left: 3px solid var(--accent2);
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .info-box strong { color: var(--text); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 20px;
+  }
+
+  .pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .pill.strong {
+    border-color: #2a3a1a;
+    color: var(--accent);
+    background: #131a0e;
+  }
+
+  .pill.moderate {
+    border-color: #1a2a3a;
+    color: var(--accent2);
+    background: #10151e;
+  }
+
+  .pill.weak {
+    border-color: #3a2a1a;
+    color: var(--warn);
+    background: #1a1510;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  .drift-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr 120px;
+    gap: 0;
+    border-bottom: 1px solid #1e2026;
+  }
+
+  .drift-row:last-child { border-bottom: none; }
+
+  .drift-cell {
+    padding: 12px 16px;
+    font-size: 12px;
+    border-right: 1px solid #1e2026;
+  }
+
+  .drift-cell:last-child { border-right: none; }
+
+  .drift-header {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .drift-header:last-child { border-right: none; }
+
+  .drift-headers {
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr 120px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .action-item {
+    display: flex;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #1e2026;
+    align-items: flex-start;
+  }
+
+  .action-item:last-child { border-bottom: none; }
+
+  .action-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    min-width: 24px;
+    margin-top: 1px;
+  }
+
+  .action-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .action-text strong { color: var(--text); }
+
+  .methodology {
+    background: #111214;
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-top: 32px;
+  }
+
+  .method-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .method-item {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 6px 0;
+    border-bottom: 1px solid #1e2026;
+    line-height: 1.5;
+  }
+
+  .method-item:last-child { border-bottom: none; }
+
+  .method-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    min-width: 180px;
+    padding-top: 1px;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <div class="report-title">Cinebody ICP Analysis</div>
+      <div class="report-subtitle">Q1 2026 — Lookback Window: Oct 1, 2024 – Mar 31, 2026</div>
+    </div>
+    <div class="report-meta">
+      Round 2 of Ongoing Quarterly Methodology<br>
+      Full Cohort n=135 &nbsp;|&nbsp; Recent Starts n=72<br>
+      Prepared: April 2026
+    </div>
+  </div>
+</header>
+
+<!-- KPI Row -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Total Accounts</div>
+    <div class="kpi-value plain">135</div>
+    <div class="kpi-sub">18-month lookback cohort</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">ICP Tier (Top 20%)</div>
+    <div class="kpi-value">27</div>
+    <div class="kpi-sub">Score range: 58–70</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Anti-ICP (Bottom 20%)</div>
+    <div class="kpi-value warn">27</div>
+    <div class="kpi-sub">Score range: 12–28</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Recent Starts Cohort</div>
+    <div class="kpi-value teal">72</div>
+    <div class="kpi-sub">Min invoice ≥ Oct 1, 2024</div>
+  </div>
+</div>
+
+<!-- ICP Profile -->
+<h2>Full Cohort — ICP Profile (Top 20%)</h2>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Top 27 Accounts by Health Score</span>
+    <span class="badge green">Scores 58–70</span>
+    <span class="badge">Max possible: 70</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Industry</th>
+        <th>Product</th>
+        <th>Status</th>
+        <th class="num">Health Score</th>
+        <th class="num">Lifetime Spend</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Dell</td><td>Computer Software</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">70</td><td class="num">$131,000</td></tr>
+      <tr><td>Thomas Jefferson University</td><td>Higher Education</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">70</td><td class="num">$118,000</td></tr>
+      <tr><td>Gilead Sciences</td><td>Hospital & Health Care</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">70</td><td class="num">$195,400</td></tr>
+      <tr><td>Hiscox Small Business Insurance</td><td>Insurance</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">67</td><td class="num">$64,214</td></tr>
+      <tr><td>GitLab Inc.</td><td>Information Technology</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">67</td><td class="num">$72,600</td></tr>
+      <tr><td>Clarios</td><td>Mechanical / Industrial Eng.</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">67</td><td class="num">$61,000</td></tr>
+      <tr><td>BMO Bank of Montreal</td><td>Banking</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">67</td><td class="num">$95,250</td></tr>
+      <tr><td>Macerich</td><td>Real Estate</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">67</td><td class="num">$137,946</td></tr>
+      <tr><td>The Boeing Company</td><td>Mechanical / Industrial Eng.</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">67</td><td class="num">$325,000</td></tr>
+      <tr><td>Portage College</td><td>Higher Education</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">64</td><td class="num">$99,400</td></tr>
+      <tr><td>DPR Construction</td><td>Mechanical / Industrial Eng.</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">64</td><td class="num">$44,285</td></tr>
+      <tr><td>VF Corporation</td><td>Apparel & Fashion</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">64</td><td class="num">$31,750</td></tr>
+      <tr><td>MacMillan Cancer Support</td><td>Hospital & Health Care</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$30,000</td></tr>
+      <tr><td>Powder River Energy</td><td>Oil & Energy</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$42,600</td></tr>
+      <tr><td>Medicines for Malaria Venture</td><td>Civic & Social Organization</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$54,050</td></tr>
+      <tr><td>Magna International</td><td>Mechanical / Industrial Eng.</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$44,400</td></tr>
+      <tr><td>ACCES Employment</td><td>Staffing & Recruiting</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$54,000</td></tr>
+      <tr><td>CARE</td><td>Civic & Social Organization</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$34,305</td></tr>
+      <tr><td>AdventHealth</td><td>Hospital & Health Care</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$31,200</td></tr>
+      <tr><td>Navy Federal Credit Union</td><td>Banking</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-high">61</td><td class="num">$34,800</td></tr>
+      <tr><td>Bristol-Myers Squibb</td><td>Hospital & Health Care</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag churned">Churned</span></td><td class="num score-mid">60</td><td class="num">$372,094</td></tr>
+      <tr><td>UCHealth</td><td>Hospital & Health Care</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag churned">Churned</span></td><td class="num score-mid">60</td><td class="num">$366,175</td></tr>
+      <tr><td>Kean University</td><td>Higher Education</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-mid">59</td><td class="num">$9,375</td></tr>
+      <tr><td>Hot Topic</td><td>Apparel & Fashion</td><td><span class="tag saas">SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-mid">59</td><td class="num">$13,600</td></tr>
+      <tr><td>American Greetings Foundation</td><td>Consumer Goods</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-mid">58</td><td class="num">$24,000</td></tr>
+      <tr><td>Crothall Healthcare</td><td>Hospital & Health Care</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-mid">58</td><td class="num">$13,200</td></tr>
+      <tr><td>Artika</td><td>Retail</td><td><span class="tag cs-saas">CS+SaaS</span></td><td><span class="tag active">Active</span></td><td class="num score-mid">58</td><td class="num">$90,250</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="insight-box">
+  <strong>Size is the dominant signal.</strong> 22 of 27 top-tier accounts are Large Enterprise (2,500+ headcount) or Enterprise (501–2,500). Revenue follows the same pattern — the majority sit at $250M+. No other variable differentiates best customers as consistently as organizational scale.
+</div>
+
+<div class="insight-box">
+  <strong>Healthcare and Industrial Engineering are your two validated verticals.</strong> Hospital & Health Care (Gilead, MacMillan, Crothall, AdventHealth, Bristol-Myers Squibb, UCHealth) and Mechanical / Industrial Engineering (Clarios, DPR, Magna, Boeing) together account for over a third of top-tier accounts — fully consistent with stated ICP targets.
+</div>
+
+<div class="insight-box">
+  <strong>CS+SaaS is the dominant product class.</strong> 20 of 27 top accounts run the hybrid model. The product structure creates stickier, multi-touchpoint relationships — tenure and repeat buyer scores reflect this compounding effect over time.
+</div>
+
+<div class="warn-box">
+  <strong>Bristol-Myers Squibb ($372K) and UCHealth ($366K) are churned top-tier accounts.</strong> Both scored 60 due to long tenure and high lifetime spend. These are not Anti-ICP accounts — they are lost enterprise relationships. Investigating exit reasons is more valuable than almost any prospecting activity at this stage.
+</div>
+
+<!-- Anti-ICP Profile -->
+<h2>Full Cohort — Anti-ICP Profile (Bottom 20%)</h2>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Bottom 27 Accounts by Health Score</span>
+    <span class="badge red">Scores 12–28</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Industry</th>
+        <th>Product</th>
+        <th>Lead Origin</th>
+        <th class="num">Health Score</th>
+        <th class="num">Lifetime Spend</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Excel Medical</td><td>Health, Wellness & Fitness</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">28</td><td class="num">$5,700</td></tr>
+      <tr><td>Amazon Watch</td><td>Civic & Social Org.</td><td><span class="tag saas">SaaS</span></td><td>Storygen</td><td class="num score-bad">28</td><td class="num">$3,000</td></tr>
+      <tr><td>Disrupt Media</td><td>Marketing & Advertising</td><td><span class="tag saas">SaaS</span></td><td>Storygen</td><td class="num score-bad">28</td><td class="num">$3,000</td></tr>
+      <tr><td>Spire Collective</td><td>Sporting Goods</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">27</td><td class="num">$7,133</td></tr>
+      <tr><td>United Flea Markets</td><td>Retail</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">26</td><td class="num">$4,000</td></tr>
+      <tr><td>PeerSpace</td><td>Travel & Tourism</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">26</td><td class="num">$1,500</td></tr>
+      <tr><td>Farther</td><td>Financial Services</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">26</td><td class="num">$1,500</td></tr>
+      <tr><td>Mettle Beverage</td><td>Food & Beverages</td><td><span class="tag cs-only">CS Only</span></td><td>Referral</td><td class="num score-bad">26</td><td class="num">$9,250</td></tr>
+      <tr><td>BioLumen</td><td>Pharmaceuticals</td><td><span class="tag cs-saas">CS+SaaS</span></td><td>Personal Reachout</td><td class="num score-bad">25</td><td class="num">$6,000</td></tr>
+      <tr><td>prioritytaxrelief.com</td><td>Financial Services</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">24</td><td class="num">$3,500</td></tr>
+      <tr><td>Integrity Advocate</td><td>Computer Software</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">24</td><td class="num">$3,500</td></tr>
+      <tr><td>Pet Releaf</td><td>Consumer Goods</td><td><span class="tag cs-only">CS Only</span></td><td>Referral</td><td class="num score-bad">24</td><td class="num">$3,500</td></tr>
+      <tr><td>Food Service Direct</td><td>Wholesale</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">24</td><td class="num">$3,500</td></tr>
+      <tr><td>Hometown Media Services</td><td>Marketing & Advertising</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">24</td><td class="num">$2,950</td></tr>
+      <tr><td>Slipstream</td><td>Sporting Goods</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">22</td><td class="num">$2,000</td></tr>
+      <tr><td>IBKUL</td><td>Apparel & Fashion</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">22</td><td class="num">$1,734</td></tr>
+      <tr><td>Bold</td><td>Health, Wellness & Fitness</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">22</td><td class="num">$3,467</td></tr>
+      <tr><td>Ten Trails</td><td>Real Estate</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">22</td><td class="num">$3,667</td></tr>
+      <tr><td>The Chair King</td><td>Retail</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">22</td><td class="num">$750</td></tr>
+      <tr><td>Future Woodlands Scotland</td><td>Consumer Services</td><td><span class="tag saas">SaaS</span></td><td>Cold Email</td><td class="num score-bad">18</td><td class="num">$1,500</td></tr>
+      <tr><td>Bozeman Marketing Co.</td><td>Marketing & Advertising</td><td><span class="tag saas">SaaS</span></td><td>—</td><td class="num score-bad">18</td><td class="num">$1,500</td></tr>
+      <tr><td>Resonate</td><td>Civic & Social Org.</td><td><span class="tag cs-only">CS Only</span></td><td>—</td><td class="num score-bad">14</td><td class="num">$750</td></tr>
+      <tr><td>Eventique</td><td>Marketing & Advertising</td><td><span class="tag cs-only">CS Only</span></td><td>Storygen</td><td class="num score-bad">12</td><td class="num">$3,500</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="warn-box">
+  <strong>The Anti-ICP is a single, consistent archetype.</strong> CS Only product, one deal, sub-6-month lifespan, Micro or Small company, sub-$10M revenue, sourced via Storygen. This isn't a diverse set of poor fits — it's one repeatable pattern driven by targeting parameters, not channel failure.
+</div>
+
+<div class="info-box">
+  <strong>Important caveat: active CS Only campaigns are not yet scoreable.</strong> Several accounts in the lower tiers have active campaigns where expansion conversations have not yet occurred. The health score model penalizes short tenure and single-deal counts — both of which are structural for any recent CS Only engagement regardless of trajectory. Accounts like <strong>Contend ($188K lifetime spend, 5 deals, Agency)</strong> and <strong>The DOOR</strong> scored in the 3rd quintile solely due to recency. The Agency / CS Only / $10M+ subset represents meaningful expansion potential that will be evaluable in the Q2 or Q3 round once conversations conclude.
+</div>
+
+<!-- Vertical & Channel Summary -->
+<h2>Vertical & Channel Distribution</h2>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Top 20% — Industry Concentration</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Industry</th><th class="num">Count</th><th class="num">% of Tier</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Hospital & Health Care</td><td class="num score-high">7</td><td class="num">26%</td></tr>
+        <tr><td>Mech. / Industrial Engineering</td><td class="num score-high">4</td><td class="num">15%</td></tr>
+        <tr><td>Higher Education</td><td class="num score-mid">3</td><td class="num">11%</td></tr>
+        <tr><td>Banking</td><td class="num score-mid">2</td><td class="num">7%</td></tr>
+        <tr><td>Apparel & Fashion</td><td class="num score-mid">2</td><td class="num">7%</td></tr>
+        <tr><td>Civic & Social Organization</td><td class="num score-mid">2</td><td class="num">7%</td></tr>
+        <tr><td>Other (1 each)</td><td class="num">7</td><td class="num">26%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Top 20% — Lead Origin</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Channel</th><th class="num">Count</th><th class="num">% of Tier</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cinebody Cold Email ⚠</td><td class="num score-high">13</td><td class="num">48%</td></tr>
+        <tr><td>Referral</td><td class="num score-mid">7</td><td class="num">26%</td></tr>
+        <tr><td>Avadel Lead</td><td class="num score-mid">3</td><td class="num">11%</td></tr>
+        <tr><td>Personal Reachout</td><td class="num">2</td><td class="num">7%</td></tr>
+        <tr><td>Storygen / Other</td><td class="num score-bad">2</td><td class="num">7%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="warn-box">
+  <strong>Cold email dominance is a historical artifact.</strong> Cinebody Cold Email was retired in April 2025 due to declining efficacy and volume. Its 48% share of the top 20% reflects accounts acquired under a prior lead gen motion — it is not a replicable channel. Storygen has been the primary vendor since April 2025. The current output skews heavily toward sub-$10M companies. This is a targeting parameter issue, not a channel failure — Storygen produced top-tier accounts (American Greetings, Crothall, PetIQ) when company size was right. <strong>Tightening the brief toward 250+ headcount and $50M+ revenue in Healthcare and Industrial verticals is the highest-leverage action this analysis supports.</strong>
+</div>
+
+<!-- ICP Drift -->
+<h2>ICP Drift — Recent Starts vs. Full Cohort</h2>
+
+<div class="section">
+  <div class="drift-headers">
+    <div class="drift-header">Dimension</div>
+    <div class="drift-header">Full Cohort Top 20%</div>
+    <div class="drift-header">Recent Starts Top 20%</div>
+    <div class="drift-header">Signal</div>
+  </div>
+  <div class="drift-row">
+    <div class="drift-cell" style="color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;">Company Size</div>
+    <div class="drift-cell">Almost exclusively $500M+ revenue, Large Enterprise headcount</div>
+    <div class="drift-cell">More $50–250M accounts present; size bar slightly lower</div>
+    <div class="drift-cell"><span class="badge warn">Watch</span></div>
+  </div>
+  <div class="drift-row">
+    <div class="drift-cell" style="color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;">Healthcare</div>
+    <div class="drift-cell">6–7 accounts, strong presence across both active and churned</div>
+    <div class="drift-cell">Crothall, Cornerstone Caregiving — present, stable</div>
+    <div class="drift-cell"><span class="badge green">Stable</span></div>
+  </div>
+  <div class="drift-row">
+    <div class="drift-cell" style="color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;">Industrial Eng.</div>
+    <div class="drift-cell">Boeing, Magna, Clarios, DPR — 4 major accounts</div>
+    <div class="drift-cell">GEI Consultants, Schubert only — pipeline thinning</div>
+    <div class="drift-cell"><span class="badge warn">Declining</span></div>
+  </div>
+  <div class="drift-row">
+    <div class="drift-cell" style="color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;">Lead Origin</div>
+    <div class="drift-cell">Cold Email dominant (48%) — now retired channel</div>
+    <div class="drift-cell">Storygen, Growth Rino, Dripify appear more in top tier</div>
+    <div class="drift-cell"><span class="badge warn">Shifting</span></div>
+  </div>
+  <div class="drift-row">
+    <div class="drift-cell" style="color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;">Product Mix</div>
+    <div class="drift-cell">CS+SaaS dominates (20 of 27)</div>
+    <div class="drift-cell">CS Only with repeat behavior emerging (Sesh Products, 7 deals)</div>
+    <div class="drift-cell"><span class="badge green">Consistent</span></div>
+  </div>
+</div>
+
+<!-- Priority Actions -->
+<h2>Priority Actions</h2>
+
+<div class="section">
+  <div class="action-item">
+    <div class="action-num">01</div>
+    <div class="action-text"><strong>Tighten Storygen targeting parameters.</strong> Current output skews heavily toward sub-$10M, consumer-facing companies. Brief should target 250+ headcount, $50M+ revenue, with Healthcare and Industrial Engineering as priority verticals. Storygen can produce quality accounts when company size is right — this is a brief problem, not a vendor problem.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">02</div>
+    <div class="action-text"><strong>Build intentional Industrial Engineering pipeline.</strong> Historical wins (Boeing, Magna, Clarios, DPR) are among the highest-value accounts in the cohort. Recent starts show thin representation in this vertical. Proactive outreach strategy needed — passive inbound is not filling the gap.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">03</div>
+    <div class="action-text"><strong>Investigate Bristol-Myers Squibb and UCHealth churn.</strong> Combined lifetime value exceeds $738K. Both were long-tenure, high-spend, top-scoring accounts. Understanding exit reasons is more valuable than almost any prospecting activity at this stage. Recovery potential should be assessed.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-num">04</div>
+    <div class="action-text"><strong>Revisit Agency / CS Only / $10M+ cohort in Q2 or Q3.</strong> Accounts like Contend ($188K lifetime spend) and The DOOR scored poorly due to structural model limitations — short tenure and single-deal counts that are inherent to recent CS Only engagements, not indicators of poor fit. Once expansion conversations conclude, this segment may represent a meaningful ICP addition. Flag active CS Only accounts as "Expansion Pending" in future rounds to distinguish from true one-and-done transactions.</div>
+  </div>
+</div>
+
+<!-- Scoring Methodology -->
+<div class="methodology">
+  <div class="method-title">Health Score Methodology — Round 2 (Q1 2026)</div>
+  <div class="method-item"><span class="method-key">Lookback Window</span><span>Oct 1, 2024 – Mar 31, 2026 (18 months). Inclusion criterion: Max Invoice Date within window.</span></div>
+  <div class="method-item"><span class="method-key">Scoring Model</span><span>7-dimension point system, max score 70. Quartile thresholds recalculated fresh from this cohort.</span></div>
+  <div class="method-item"><span class="method-key">Points: Status</span><span>Active = 10, Churned = 0</span></div>
+  <div class="method-item"><span class="method-key">Points: Product Class</span><span>CS+SaaS = 10, SaaS = 7, CS Only = 3, Free = 0</span></div>
+  <div class="method-item"><span class="method-key">Points: Spend Level</span><span>Avg. Spend/Year quartiles — ≥$12,219 = 10 / ≥$6,546 = 7 / ≥$3,817 = 4 / below = 2</span></div>
+  <div class="method-item"><span class="method-key">Points: Repeat Buyer</span><span>Deals Won — 5+ = 10 / 3–4 = 7 / 2 = 4 / 1 = 1</span></div>
+  <div class="method-item"><span class="method-key">Points: Company Revenue</span><span>Annual Revenue quartiles — ≥$500M = 10 / ≥$27M = 7 / ≥$8.5M = 4 / below = 2</span></div>
+  <div class="method-item"><span class="method-key">Points: Company Headcount</span><span>Head Count quartiles — ≥2,550 = 10 / ≥125 = 7 / ≥50 = 4 / below = 2</span></div>
+  <div class="method-item"><span class="method-key">Points: Tenure</span><span>Est. Lifespan (actual, not floored) quartiles — ≥4.0yr = 10 / ≥1.9yr = 7 / ≥0.5yr = 4 / below = 2</span></div>
+  <div class="method-item"><span class="method-key">Tier Assignment</span><span>Top 20% (n=27, scores 58–70) = ICP. Bottom 20% (n=27, scores 12–28) = Anti-ICP. Ties at boundary included in full.</span></div>
+  <div class="method-item"><span class="method-key">Recent Starts Cohort</span><span>Min Invoice Date ≥ Oct 1, 2024. n=72. Scored with fresh quartiles calculated from this subset only.</span></div>
+  <div class="method-item"><span class="method-key">Tenure Note</span><span>CS Only accounts previously floored at 1.0 year for Avg. Spend/Year calculation. Actual lifespan values used for health score tenure dimension this round for methodological accuracy.</span></div>
+  <div class="method-item"><span class="method-key">Comparability</span><span>Band definitions (Size Band, Revenue Band, Segment, Lifetime Spend Band) and scoring logic consistent with Round 1 (Q4 2025) for quarter-over-quarter comparability.</span></div>
+</div>
+
+<footer>
+  <span>Cinebody — Confidential</span>
+  <span>ICP Analysis Round 2 &nbsp;|&nbsp; Q1 2026 &nbsp;|&nbsp; Operations Home / Revenue Intelligence</span>
+</footer>
+
+</body>
+</html>
